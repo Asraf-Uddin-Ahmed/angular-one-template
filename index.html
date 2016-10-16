@@ -6,23 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>MyApp</title>
 </head>
-<body class="show-menu">
-  <div class="menu-wrap">
-    <nav class="menu">
-      <div ng-controller="NavCtrl" class="icon-list ng-scope">
-        <a href="#/store">
-          <i class="fa fa-film"></i>
-          <span class="ng-binding">store</span>
-        </a>
-        <a href="#/dashboard" >
-          <i class="fa fa-cubes"></i>
-          <span class="ng-binding">dashboard</span>
-        </a>
+<body>
+  <div>
+    <nav>
+      <div ng-controller="NavCtrl">
+        <a href="#/store">store</a>
+        <a href="#/dashboard" >dashboard</a>
       </div>
     </nav>
   </div>
 
-  <div class="padding" ng-view="">
+  <div ng-view="">
     This is ng view
   </div>
 
