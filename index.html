@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="MyApp">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Runway</title>
+</head>
+<body class="show-menu">
+  <div class="menu-wrap">
+    <nav class="menu">
+      <div ng-controller="NavCtrl" class="icon-list ng-scope">
+        <a href="#/store">
+          <i class="fa fa-film"></i>
+          <span class="ng-binding">store</span>
+        </a>
+        <a href="#/dashboard" >
+          <i class="fa fa-cubes"></i>
+          <span class="ng-binding">dashboard</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="padding" ng-view="">
+    This is ng view
+  </div>
+
+  <!-- vendor dependency -->
+  <script src="js/jquery.min.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/jquery-ui.js"></script>
+
+  <!-- angular dependency -->
+  <script type="text/javascript" src="js/angularjs/angular.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-animate.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-aria.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-cookies.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-messages.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-resource.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-route.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-sanitize.min.js"></script>
+  <script type="text/javascript" src="js/angularjs/angular-touch.min.js"></script>
+
+  <script src="app.js"></script>
+
+  <!--Common-->
+  <script src="common/configs/ApiEndPoints.js"></script>
+  <script src="common/services/angular-web-service.js"></script>
+  <!--Common-->
+
+  <!--Services-->
+  <!--Services-->
+
+  <!--Controllers-->
+  <script src="module/dashboard/DashboardController.js"></script>
+  <script src="module/store/StoreController.js"></script>
+</body>
+</html>
