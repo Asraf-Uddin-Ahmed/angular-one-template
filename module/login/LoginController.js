@@ -1,12 +1,19 @@
 'use strict';
 
 angular.module('Login').controller('LoginController',
-function ($scope, LoginRequest, LoginResponse, HttpRequestService) {
+function ($scope, $location, AuthService) {
   $scope.pageName = "Login";
 
-  $scope.request = new LoginRequest();
-  $scope.response = LoginResponse;
-
-  $scope.response.loadDetail();
+  $scope.loginUser = function(){
+    $scope.hasError = false;
+    AuthService.login($scope.loginData).then(function (response) {
+      console.log(response);
+      $location.path('/profile');
+    }, function (err) {
+      console.log(err);
+      $scope.errorMessage = err.error_description;
+      $scope.hasError = true;
+    });
+  }
 
 });
