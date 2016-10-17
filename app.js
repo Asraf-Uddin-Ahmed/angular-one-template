@@ -27,7 +27,9 @@ var myApp = angular.module('MyApp', [
 ]);
 
 myApp.controller('NavCtrl', ['$scope', '$location', function ($scope, $location) {
-
+  $scope.isActive = function (item) {
+    return $location.path().indexOf(item) != -1;
+  };
 }]);
 
 myApp.config(function ($routeProvider) {
