@@ -25,52 +25,43 @@ var myApp = angular.module('MyApp', [
   'Base',
   'ngRoute',
   'ngCookies',
-  'ngResource'
+  'ngResource',
+  'angular-loading-bar',
+  'ngAnimate',
+  'LocalStorageModule'
 ]);
 
-myApp.controller('NavCtrl', ['$scope', '$location', function ($scope, $location) {
+myApp.controller('NavCtrl', ['$scope', '$location', 'AuthService', function ($scope, $location, AuthService) {
   $scope.isActive = function (item) {
     return $location.path().indexOf(item) != -1;
   };
+
+  $scope.logOut = function () {
+    AuthService.logOut();
+    $location.path('/login');
+  }
+
+  $scope.authentication = AuthService.authentication;
 }]);
 
-// myApp.run(function($rootScope, $location, $cookieStore, $http, $window, ApiEndPoints, $timeout)		{
-//   'use strict';
-//   console.log($rootScope);
-//   // keep user logged in after page refresh
-//   $rootScope.globals = $cookieStore.get('globalsDesigner') || {};
-//   if ($rootScope.globals.currentUser) {
-//     $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.globals.authdata; // jshint ignore:line
-//   }
-//   $rootScope.$on('$routeChangeStart', function (event, next, current) {
-//     var loggedIn = $rootScope.globals.currentUser;
-//     if (next.requireLogin && !loggedIn) {
-//       //TODO:: URL should not be hard coded
-//       $window.location.href = ApiEndPoints.btocRedirect;
-//     }
-//     if(loggedIn && !parseInt($rootScope.globals.currentUser.isProfileCompleted * $rootScope.globals.currentUser.isVerified) && next.requireLogin){
-//       $location.path('/profile');
-//     }
-//   });
-//
-//   //TODO:: should be in base controller
-//   $rootScope.logout = function () {
-//     var authdata = $rootScope.globals.authdata;
-//     $timeout(function () {
-//       $cookieStore.remove('globalsDesigner');
-//     });
-//     $http.defaults.headers.common.Authorization = 'Basic ';
-//     console.log($rootScope);
-//     $timeout(function () {
-//       $window.location.href = ApiEndPoints.btocRedirect+'logout/'+authdata + '/';
-//     });
-//   };
-// });
+myApp.run(['AuthService', '$rootScope', '$location', function (AuthService, $rootScope, $location) {
+  AuthService.fillAuthData();
 
-myApp.config(function ($routeProvider) {
+  $rootScope.$on('$routeChangeStart', function (event, next, current) {
+    if(!AuthService.authentication.isAuth && next.requireLogin) {
+      $location.path('/login');
+    }
+  });
+}]);
+
+
+myApp.config(function ($routeProvider, $httpProvider) {
   'use strict';
+
+  $httpProvider.interceptors.push('AuthInterceptorService');
+
   $routeProvider
-  .when('/', {
+  .when('/login', {
     controller: 'LoginController',
     templateUrl: 'module/login/login.html'
   })
@@ -83,5 +74,5 @@ myApp.config(function ($routeProvider) {
     controller: 'DashboardController',
     templateUrl: 'module/dashboard/dashboard.html'
   })
-  .otherwise({redirectTo: '/'});
+  .otherwise({redirectTo: '/login'});
 });
