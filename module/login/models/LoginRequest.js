@@ -17,13 +17,13 @@ function(AuthService, $location) {
 		loginUser: function() {
 			this.foo();
 			console.log(this);
-			AuthService.login(this);
-			$location.path('/profile');
-			// AuthService.login().then(function (response) {
-			// 	$location.path('/profile');
-			// }, function (err) {
-			// 	// $scope.message = err.error_description;
-			// });
+			AuthService.login(this).then(function (response) {
+				console.log(response);
+				$location.path('/profile');
+			}, function (err) {
+				console.log(err);
+				// $scope.message = err.error_description;
+			});
 		}
 	};
 
