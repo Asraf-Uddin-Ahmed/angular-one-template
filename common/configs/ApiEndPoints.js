@@ -4,6 +4,6 @@ angular.module('MyApp.configs').factory('ApiEndPoints', function () {
     return {
         appName: 'MyApp',
         appVersion: '1.0',
-        url: 'http://localhost:00/'
+        url: 'http://localhost:4873/'
     };
 });
