@@ -95,7 +95,7 @@
 	                    }
 	                });
 	                $element.on('$destroy', function () {
-	                    overlayElementScope.$destroy();
+	                    overlayElementScope ? overlayElementScope.$destroy() : null;
 	                    unsubscribe();
 	                });
 	                _this.updateOverlayElement(overlayInstance);
