@@ -11,6 +11,19 @@ function ($q, $injector, $location, localStorageService) {
     var authData = localStorageService.get('authorizationData');
     if (authData) {
       config.headers.Authorization = 'Bearer ' + authData.token;
+
+      var authService = $injector.get('AuthService');
+      if(authData.useRefreshTokens && authService.isTokenExpired()){
+        return authService.refreshToken().then(function(data){
+          console.log(data);
+          authData = localStorageService.get('authorizationData');
+          config.headers.Authorization = 'Bearer ' + authData.token;
+          return config;
+        }, function(error){
+          console.log(error);
+          return config;
+        });
+      }
     }
 
     return config;

@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('MyApp.services').factory('AuthService',
-function ($http, $q, localStorageService, ApiEndPoints) {
+function ($http, $q, localStorageService, ApiEndPoints, jwtHelper) {
 
   var authServiceFactory = {};
 
   var _authentication = {
     isAuth: false,
     userName: "",
+    userId: "",
     useRefreshTokens: false
   };
 
@@ -45,14 +46,15 @@ function ($http, $q, localStorageService, ApiEndPoints) {
     }).success(function (response) {
 
       if (loginData.useRefreshTokens) {
-        localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
+        localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, userId: response.userID, refreshToken: response.refresh_token, useRefreshTokens: true });
       }
       else {
-        localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, refreshToken: "", useRefreshTokens: false });
+        localStorageService.set('authorizationData', { token: response.access_token, userName: loginData.userName, userId: response.userID, refreshToken: "", useRefreshTokens: false });
       }
       _authentication.isAuth = true;
       _authentication.userName = loginData.userName;
       _authentication.useRefreshTokens = loginData.useRefreshTokens;
+      _authentication.userId = response.userID;
 
       deferred.resolve(response);
     }).error(function (err, status) {
@@ -67,6 +69,7 @@ function ($http, $q, localStorageService, ApiEndPoints) {
     localStorageService.remove('authorizationData');
     _authentication.isAuth = false;
     _authentication.userName = "";
+    _authentication.userId = "";
     _authentication.useRefreshTokens = false;
   };
 
@@ -75,6 +78,7 @@ function ($http, $q, localStorageService, ApiEndPoints) {
     if (authData) {
       _authentication.isAuth = true;
       _authentication.userName = authData.userName;
+      _authentication.userId = authData.userID;
       _authentication.useRefreshTokens = authData.useRefreshTokens;
     }
   };
@@ -93,7 +97,7 @@ function ($http, $q, localStorageService, ApiEndPoints) {
         localStorageService.remove('authorizationData');
 
         $http.post(ApiEndPoints.url + 'oauth/token', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }).success(function (response) {
-          localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, refreshToken: response.refresh_token, useRefreshTokens: true });
+          localStorageService.set('authorizationData', { token: response.access_token, userName: response.userName, userId: response.userID, refreshToken: response.refresh_token, useRefreshTokens: true });
           deferred.resolve(response);
         }).error(function (err, status) {
           _logOut();
@@ -149,6 +153,23 @@ function ($http, $q, localStorageService, ApiEndPoints) {
 
   };
 
+  var _decodeToken = function(){
+    var authData = localStorageService.get('authorizationData');
+    return jwtHelper.decodeToken(authData.token);
+  };
+  var _isTokenExpired = function(){
+    var authData = localStorageService.get('authorizationData');
+    return jwtHelper.isTokenExpired(authData.token);
+  };
+  var _getTokenExpirationDate = function(){
+    var authData = localStorageService.get('authorizationData');
+    return jwtHelper.getTokenExpirationDate(authData.token);
+  };
+  var _isRoleExist = function(roleName){
+    var token = _decodeToken();
+    return token.role.some(obj => obj.toLowerCase() == roleName.toLowerCase());
+  };
+
   authServiceFactory.saveRegistration = _saveRegistration;
   authServiceFactory.login = _login;
   authServiceFactory.logOut = _logOut;
@@ -159,6 +180,11 @@ function ($http, $q, localStorageService, ApiEndPoints) {
   authServiceFactory.obtainAccessToken = _obtainAccessToken;
   authServiceFactory.externalAuthData = _externalAuthData;
   authServiceFactory.registerExternal = _registerExternal;
+
+  authServiceFactory.decodeToken = _decodeToken;
+  authServiceFactory.isTokenExpired = _isTokenExpired;
+  authServiceFactory.getTokenExpirationDate = _getTokenExpirationDate;
+  authServiceFactory.isRoleExist = _isRoleExist;
 
   return authServiceFactory;
 });

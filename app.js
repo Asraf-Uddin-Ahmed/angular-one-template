@@ -29,7 +29,8 @@ var myApp = angular.module('MyApp', [
   'angular-loading-bar',
   'ngAnimate',
   'LocalStorageModule',
-  'bsLoadingOverlay'
+  'bsLoadingOverlay',
+  'angular-jwt'
 ]);
 
 myApp.controller('NavCtrl', ['$scope', '$location', 'AuthService', function ($scope, $location, AuthService) {
