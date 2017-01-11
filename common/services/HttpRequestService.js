@@ -25,7 +25,12 @@ factory('HttpRequestService', function ($http, $q, ApiEndPoints) {
   };
   var _delete = function (url, data) {
     var defer = $q.defer();
-    $http.delete(_baseUrl + url, data).then(function(response) {
+    $http.delete(_baseUrl + url, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: data
+    }).then(function(response) {
       defer.resolve(response);
     }, function (error) {
       return defer.reject(error);

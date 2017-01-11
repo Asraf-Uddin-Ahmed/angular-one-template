@@ -11,37 +11,32 @@ angular.module("MyApp.services").factory('PaginationService', function() {
 	/*
 	* Public
 	*/
-	var getPagination = function(responsePagination) {
+	var getPagination = function(responseData) {
 		var pagination = {
-			displayStart : responsePagination.displayStart,
-			displaySize : responsePagination.displaySize,
-			sortedAttribute : responsePagination.sortedAttribute,
-			sortingOrder : responsePagination.sortingOrder,
-			totalContent : responsePagination.totalContent,
-			totalPage : Math
-			.ceil(responsePagination.totalContent
-				/ responsePagination.displaySize),
-				currentPageNumber : (responsePagination.displayStart / responsePagination.displaySize) + 1,
+			displayStart : responseData.pagination.displayStart,
+			displaySize : responseData.pagination.displaySize,
+			sortBy : responseData.sortBy,
+			totalItem : responseData.totalItem,
+			totalPage : Math.ceil(responseData.totalItem / responseData.pagination.displaySize),
+			currentPageNumber : (responseData.pagination.displayStart / responseData.pagination.displaySize) + 1,
 
-				getPageNumber : function(num) {
-					return new Array(num);
-				},
-				isCurrentPage : function(pageNumber) {
-					return pageNumber === this.currentPageNumber;
-				},
-				getTotalContentInPage : function() {
-					var nextNumberOfContent = responsePagination.totalContent
-					- responsePagination.displayStart;
-					return nextNumberOfContent > responsePagination.displaySize ? responsePagination.displaySize
-					: nextNumberOfContent;
-				},
-				hasSingleRecordInPage : function() {
-					return this.getTotalContentInPage() === 1;
-				}
-			};
-			return pagination;
-		}
+			getPageNumber : function(num) {
+				return new Array(num);
+			},
+			isCurrentPage : function(pageNumber) {
+				return pageNumber === this.currentPageNumber;
+			},
+			getTotalContentInPage : function() {
+				var nextNumberOfContent = responseData.totalItem - responseData.pagination.displayStart;
+				return nextNumberOfContent > responseData.pagination.displaySize ? responseData.pagination.displaySize : nextNumberOfContent;
+			},
+			hasSingleRecordInPage : function() {
+				return this.getTotalContentInPage() === 1;
+			}
+		};
+		return pagination;
+	}
 
-		objToReturn.getPagination = getPagination;
-		return objToReturn;
-	});
+	objToReturn.getPagination = getPagination;
+	return objToReturn;
+});

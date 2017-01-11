@@ -4,49 +4,46 @@ angular.module("MyApp.services").factory('ActionMessageService', function() {
 
 	var objToReturn = {};
 
-	var MESSAGE = {
+	var _MESSAGE_DETAIL = {
 		ERROR: {
-			type: "ERROR"
+			type: "ERROR",
+			bootstrapClass: "alert alert-danger"
 		},
 		OK: {
-			type: "SUCCESS"
+			type: "OK",
+			bootstrapClass: "alert alert-success"
 		},
 		INFO: {
-			type: "INFO"
+			type: "INFO",
+			bootstrapClass: "alert alert-info"
 		},
 		WARNING: {
-			type: "WARNING"
+			type: "INFO",
+			bootstrapClass: "alert alert-warning"
 		}
 	};
+	var _MESSAGE_STATUS = {
+		400: _MESSAGE_DETAIL.ERROR,
+		200: _MESSAGE_DETAIL.OK
+	};
 
-	/*
-	* Private
-	*/
-
-	/*
-	* Public
-	*/
-	var getActionMessage = function(data) {
+	var _getActionMessage = function(response) {
+		var actionMessage = "<strong>" + response.data.message + "</strong>";
+		var textMessage = response.data.message;
+		if(response.data.modelState) {
+			_.forEach(_.flatMap(response.data.modelState), function(value) {
+				actionMessage += ("<br>" + value);
+				textMessage += ("\n" + value);
+			});
+		}
 		return {
-			message : data.message,
-			isShow : true,
-			type :  MESSAGE[data.code].type
+			message: actionMessage,
+			textMessage: textMessage,
+			isShow: true,
+			detail:  _MESSAGE_STATUS[response.status]
 		};
 	}
 
-	var handleError = function(errorMessage) {
-		var actionMessage = getActionMessage({
-			message : errorMessage,
-			code : "ERROR"
-		});
-		actionMessage.success = false;
-
-		return function() {
-			return actionMessage;
-		};
-	}
-
-	objToReturn.getActionMessage = getActionMessage;
-	objToReturn.handleError = handleError;
+	objToReturn.getActionMessage = _getActionMessage;
 	return objToReturn;
 });

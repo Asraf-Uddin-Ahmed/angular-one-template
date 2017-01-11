@@ -78,7 +78,7 @@ function ($http, $q, localStorageService, ApiEndPoints, jwtHelper) {
     if (authData) {
       _authentication.isAuth = true;
       _authentication.userName = authData.userName;
-      _authentication.userId = authData.userID;
+      _authentication.userId = authData.userId;
       _authentication.useRefreshTokens = authData.useRefreshTokens;
     }
   };
@@ -155,18 +155,22 @@ function ($http, $q, localStorageService, ApiEndPoints, jwtHelper) {
 
   var _decodeToken = function(){
     var authData = localStorageService.get('authorizationData');
-    return jwtHelper.decodeToken(authData.token);
+    return authData ? jwtHelper.decodeToken(authData.token) : null;
   };
   var _isTokenExpired = function(){
     var authData = localStorageService.get('authorizationData');
-    return jwtHelper.isTokenExpired(authData.token);
+    return authData ? jwtHelper.isTokenExpired(authData.token) : null;
   };
   var _getTokenExpirationDate = function(){
     var authData = localStorageService.get('authorizationData');
-    return jwtHelper.getTokenExpirationDate(authData.token);
+    return authData ? jwtHelper.getTokenExpirationDate(authData.token) : null;
   };
   var _isRoleExist = function(roleName){
     var token = _decodeToken();
+    if(!token) {
+      return null;
+    }
+    token.role = typeof token.role === "string" ? [token.role] : token.role;
     return token.role.some(obj => obj.toLowerCase() == roleName.toLowerCase());
   };
 
